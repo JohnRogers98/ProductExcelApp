@@ -1,6 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Wordprocessing;
 using ProductExcelApp.Models;
 using ProductExcelApp.Resources;
 using System.Data;
@@ -9,14 +8,14 @@ namespace ProductExcelApp.DataProvider
 {
     public class ExcelContext : IDataProviderServices
     {
-        private string _pathToFile;
+        private String _pathToFile;
 
-        private ExcelContext(string pathToFile)
+        private ExcelContext(String pathToFile)
         {
             _pathToFile = pathToFile;
         }
 
-        public static ExcelContext CreateExcelContext(string pathToFile)
+        public static ExcelContext CreateExcelContext(String pathToFile)
         {
             if (File.Exists(pathToFile))
                 return new ExcelContext(pathToFile);
@@ -33,13 +32,13 @@ namespace ProductExcelApp.DataProvider
                 x => new Product
                 {
                     Id = Convert.ToInt32(x[0]),
-                    Name = (string)x[1],
-                    ProductType = GetProductTypeFromRus((string)x[2]),
+                    Name = (String)x[1],
+                    ProductType = GetProductTypeFromRus((String)x[2]),
                     Price = Convert.ToDouble(x[3])
                 });
             return productList;
         }
-        private ProductType GetProductTypeFromRus(string rusName)
+        private ProductType GetProductTypeFromRus(String rusName)
         {
             return rusName switch
             {
@@ -58,9 +57,9 @@ namespace ProductExcelApp.DataProvider
                 x => new Client
                 {
                     Id = Convert.ToInt32(x[0]),
-                    Name = (string)x[1],
-                    Adress = (string)x[2],
-                    ContactPerson = (string)x[3]
+                    Name = (String)x[1],
+                    Adress = (String)x[2],
+                    ContactPerson = (String)x[3]
                 });
             return clientList;
         }
@@ -85,7 +84,7 @@ namespace ProductExcelApp.DataProvider
         /// Excell uses number of days from O.A.
         /// </summary>
         /// <returns></returns>
-        private DateOnly GetDateFromOADaysNumber(int oaNumber)
+        private DateOnly GetDateFromOADaysNumber(Int32 oaNumber)
         {
             return DateOnly.FromDateTime(DateTime.FromOADate(oaNumber));
         }
@@ -102,10 +101,10 @@ namespace ProductExcelApp.DataProvider
             Worksheet worksheet = ((WorksheetPart)workbookPart.GetPartById(sheet.Id)).Worksheet;
             SheetData sheetData = worksheet.GetFirstChild<SheetData>();
 
-            for (int row = 0; row < sheetData.ChildElements.Count(); row++)
+            for (Int32 row = 0; row < sheetData.ChildElements.Count(); row++)
             {
                 Cell clientIdCell = (Cell)sheetData.ElementAt(row).ChildElements.ElementAt(0);
-                string currentValue = string.Empty;
+                String currentValue = String.Empty;
 
                 if (clientIdCell.CellValue == null)
                 {
@@ -119,7 +118,7 @@ namespace ProductExcelApp.DataProvider
                     {
                         if (contactPersonCell.DataType == CellValues.SharedString)
                         {
-                            if (int.TryParse(contactPersonCell.InnerText, out int id))
+                            if (Int32.TryParse(contactPersonCell.InnerText, out Int32 id))
                             {
                                 SharedStringItem item = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(id);
                                 if (item.Text != null)
@@ -152,14 +151,14 @@ namespace ProductExcelApp.DataProvider
             Worksheet worksheet = ((WorksheetPart)workbookPart.GetPartById(sheet.Id)).Worksheet;
             SheetData sheetData = worksheet.GetFirstChild<SheetData>();
 
-            for (int row = 0; row < sheetData.ChildElements.Count(); row++)
+            for (Int32 row = 0; row < sheetData.ChildElements.Count(); row++)
             {
-                var columnOfRowList = new List<string>();
+                var columnOfRowList = new List<String>();
 
-                for (int column = 0; column < sheetData.ElementAt(row).ChildElements.Count(); column++)
+                for (Int32 column = 0; column < sheetData.ElementAt(row).ChildElements.Count(); column++)
                 {
                     Cell currentCell = (Cell)sheetData.ElementAt(row).ChildElements.ElementAt(column);
-                    string currentValue = string.Empty;
+                    String currentValue = String.Empty;
 
                     if (currentCell.CellValue == null)
                     {
@@ -170,7 +169,7 @@ namespace ProductExcelApp.DataProvider
                     {
                         if (currentCell.DataType == CellValues.SharedString)
                         {
-                            if (int.TryParse(currentCell.InnerText, out int id))
+                            if (Int32.TryParse(currentCell.InnerText, out Int32 id))
                             {
                                 SharedStringItem item = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(id);
                                 if (item.Text != null)
