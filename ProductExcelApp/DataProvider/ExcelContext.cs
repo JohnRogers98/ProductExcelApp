@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
 using ProductExcelApp.Models;
 using ProductExcelApp.Resources;
 using System.Data;
@@ -89,9 +90,55 @@ namespace ProductExcelApp.DataProvider
             return DateOnly.FromDateTime(DateTime.FromOADate(oaNumber));
         }
 
+        public Boolean ChangeContactPersonByClientId(Int32 clientId, String newContactPerson)
+        {
+            using var doc = SpreadsheetDocument.Open(_pathToFile, true);
+
+            WorkbookPart workbookPart = doc.WorkbookPart;
+            Sheets sheetCollection = workbookPart.Workbook.GetFirstChild<Sheets>();
+
+            var sheet = sheetCollection.OfType<Sheet>().First(sh => sh.Name == StaticResources.Client_Rus);
+
+            Worksheet worksheet = ((WorksheetPart)workbookPart.GetPartById(sheet.Id)).Worksheet;
+            SheetData sheetData = worksheet.GetFirstChild<SheetData>();
+
+            for (int row = 0; row < sheetData.ChildElements.Count(); row++)
+            {
+                Cell clientIdCell = (Cell)sheetData.ElementAt(row).ChildElements.ElementAt(0);
+                string currentValue = string.Empty;
+
+                if (clientIdCell.CellValue == null)
+                {
+                    return false;
+                }
+
+                if (clientIdCell.CellValue.Text == clientId.ToString())
+                {
+                    Cell contactPersonCell = (Cell)sheetData.ElementAt(row).ChildElements.ElementAt(3);
+                    if (contactPersonCell.DataType != null)
+                    {
+                        if (contactPersonCell.DataType == CellValues.SharedString)
+                        {
+                            if (int.TryParse(contactPersonCell.InnerText, out int id))
+                            {
+                                SharedStringItem item = workbookPart.SharedStringTablePart.SharedStringTable.Elements<SharedStringItem>().ElementAt(id);
+                                if (item.Text != null)
+                                {
+                                    item.Text.Text = newContactPerson;
+                                    worksheet.Save();
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
         #endregion Acrtions
 
-        private DataTable ReadSheetOfName(string nameOfSheet)
+        private DataTable ReadSheetOfName(String nameOfSheet)
         {
             DataTable table = new DataTable();
 

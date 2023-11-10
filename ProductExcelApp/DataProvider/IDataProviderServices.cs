@@ -7,5 +7,7 @@ namespace ProductExcelApp.DataProvider
         IEnumerable<Product> GetProducts();
         IEnumerable<Client> GetClients();
         IEnumerable<Order> GetOrders();
+
+        Boolean ChangeContactPersonByClientId(Int32 clientId, String newContactPerson);
     }
 }

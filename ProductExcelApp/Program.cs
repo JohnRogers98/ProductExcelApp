@@ -24,5 +24,8 @@ public class Program
 
         var goldClient = repository.GetGoldClient(2023, 1);
         Console.WriteLine(goldClient.Name);
+
+        Boolean isChanged = repository.ChangeClientContactPerson("ООО Снег", "Андреев Андрей Дмитриевич");
+        Console.WriteLine(isChanged);
     }
 }

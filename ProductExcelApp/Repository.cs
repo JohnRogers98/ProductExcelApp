@@ -27,6 +27,19 @@ namespace ProductExcelApp
             return new Repository(dataProvider);
         }
 
+        public Boolean ChangeClientContactPerson(String nameOfClient, String newContactPerson)
+        {
+            var client = _clientDictionary.Values.Where(client => client.Name == nameOfClient).FirstOrDefault();
+            if(client == null)
+            {
+                return false;
+            }
+
+            client.ContactPerson = newContactPerson;
+            var status = _dataProvider.ChangeContactPersonByClientId(client.Id, client.ContactPerson);
+            return status;
+        }
+
         public IEnumerable<Object> GetProductInfoByName(String productName)
         {
             var productId = _productDictionary.Values.First(product => product.Name == productName).Id;
