@@ -34,6 +34,33 @@ namespace ProductExcelApp
             return _orderDictionary.Values.Where(order => order.ProductId == productId)
                 .Select(order => new { order.Client.Name, order.Count, order.DeliveryDate });
         }
+
+        public Client GetGoldClient(Int32 year)
+        {
+            var from =  new DateOnly(year, 1, 1);
+            var to =  new DateOnly(year, 12, 31);
+
+            return GetGoldClient(from, to);
+        }
+        public Client GetGoldClient(Int32 year, Int32 month)
+        {
+            var from = new DateOnly(year, month, 1);
+            var to = new DateOnly(year, month, DateTime.DaysInMonth(year, month));
+
+            return GetGoldClient(from, to);
+        }
+        private Client? GetGoldClient(DateOnly from, DateOnly to)
+        {
+            var ordersInDateRange = _orderDictionary.Values.Where(order => order.DeliveryDate >= from && order.DeliveryDate <= to);
+
+            var ordersGroupByClientId = ordersInDateRange.GroupBy(order => order.ClientId);
+
+            var groupOfOrdersMaxCount = ordersGroupByClientId.OrderByDescending(x => x.Count()).FirstOrDefault();
+
+            var goldClient = groupOfOrdersMaxCount?.First().Client;
+
+            return goldClient;
+        }
         
         private void SetProductDictionary()
         {

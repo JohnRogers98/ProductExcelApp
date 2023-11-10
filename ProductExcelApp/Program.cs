@@ -21,5 +21,8 @@ public class Program
         {
             Console.WriteLine(product);
         }
+
+        var goldClient = repository.GetGoldClient(2023, 1);
+        Console.WriteLine(goldClient.Name);
     }
 }
