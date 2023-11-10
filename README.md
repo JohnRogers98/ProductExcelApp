@@ -1,2 +1,2 @@
 # ProductExcelApp
--> Repository.GetGoldenClient is not checking loop year
+-> Repository.GetGoldenClient() is not checking loop year
