@@ -26,6 +26,14 @@ namespace ProductExcelApp
         {
             return new Repository(dataProvider);
         }
+
+        public IEnumerable<Object> GetProductInfoByName(String productName)
+        {
+            var productId = _productDictionary.Values.First(product => product.Name == productName).Id;
+
+            return _orderDictionary.Values.Where(order => order.ProductId == productId)
+                .Select(order => new { order.Client.Name, order.Count, order.DeliveryDate });
+        }
         
         private void SetProductDictionary()
         {

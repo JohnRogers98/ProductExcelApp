@@ -14,5 +14,12 @@ public class Program
         IDataProviderServices dataProvider = ExcelContext.CreateExcelContext(path);
 
         var repository = Repository.CreateFilledRepository(dataProvider);
+
+        var productInfo = repository.GetProductInfoByName("Сыр");
+
+        foreach(var product in productInfo)
+        {
+            Console.WriteLine(product);
+        }
     }
 }
